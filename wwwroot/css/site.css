@@ -29,3 +29,23 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.loginn {
+  background-color: purple;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.loginn:hover {
+  background-color: #a020f0; /* Un morado más claro */
+  transform: scale(1.03); /* Efecto leve de agrandamiento */
+}
+
+.loginn:active {
+  background-color: #6a0dad; /* Un morado más oscuro al hacer clic */
+  transform: scale(0.98); /* Efecto leve de presión */
+}
+
+.titlelogin{
+  background-color: purple;
+}
