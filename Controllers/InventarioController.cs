@@ -16,17 +16,17 @@ namespace Postsistem.Controllers
             _context = context;
         }
 
-public async Task<IActionResult> Index(string nombre = null)
-{
-    IQueryable<Producto> productos = _context.Productos.OrderBy(p => p.Nombre);
+        public async Task<IActionResult> Index(string nombre = null)
+        {
+            IQueryable<Producto> productos = _context.Productos.OrderBy(p => p.Nombre);
 
-    if (!string.IsNullOrEmpty(nombre))
-    {
-        productos = productos.Where(p => p.Nombre.Contains(nombre));
-    }
+            if (!string.IsNullOrEmpty(nombre))
+            {
+                productos = productos.Where(p => p.Nombre.Contains(nombre));
+            }
 
-    return View(await productos.ToListAsync());
-}
+            return View(await productos.ToListAsync());
+        }
 
         [HttpGet]
         public IActionResult BuscarProducto(string nombre)
@@ -45,24 +45,36 @@ public async Task<IActionResult> Index(string nombre = null)
             return Json(producto);
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult CreateMultiple()
         {
-            return View();
+            // Carga una lista inicial con un producto vacío
+            var productos = new List<Producto> { new Producto() };
+            return View(productos);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Producto producto)
+        public async Task<IActionResult> CreateMultiple(List<Producto> productos)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(producto);
+                foreach (var producto in productos)
+                {
+                    if (!string.IsNullOrWhiteSpace(producto.Nombre))
+                    {
+                        _context.Add(producto);
+                    }
+                }
+
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Producto agregado correctamente";
+                TempData["SuccessMessage"] = $"{productos.Count} productos agregados correctamente";
                 return RedirectToAction(nameof(Index));
             }
-            return View(producto);
+
+            return View(productos);
         }
+
 
         public async Task<IActionResult> Edit(int id)
         {
