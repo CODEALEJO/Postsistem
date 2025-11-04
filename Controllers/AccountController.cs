@@ -44,7 +44,11 @@ public class AccountController : Controller
             if (result.Succeeded)
             {
                 _logger.LogInformation("Usuario autenticado: {Email}", model.Email);
-                return RedirectToLocal(returnUrl);
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+                else
+                    return RedirectToAction("Index", "Inventario");
             }
 
             ModelState.AddModelError(string.Empty, "Intento de inicio de sesión no válido.");
@@ -114,6 +118,6 @@ public class AccountController : Controller
         {
             return Redirect(returnUrl);
         }
-        return RedirectToAction("Index", "Venta");
+        return RedirectToAction("Index", "Inventario");
     }
 }

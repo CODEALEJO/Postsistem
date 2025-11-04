@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using POSTSISTEM.Models;
 using Microsoft.AspNetCore.Identity;
+using Postsistem.Models;
 
 namespace POSTSISTEM.Data
 {
@@ -14,6 +15,7 @@ namespace POSTSISTEM.Data
         {
         }
 
+         public DbSet<Producto> Productos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
