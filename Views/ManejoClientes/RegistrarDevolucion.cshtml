@@ -1,0 +1,41 @@
+@model Postsistem.Models.DevolucionGarantia
+
+@{
+    ViewData["Title"] = "Registrar Devolución o Garantía";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h3 class="text-warning text-center mb-4">Registrar Devolución / Garantía</h3>
+
+        <div class="alert alert-info text-center">
+            Cliente: <strong>@ViewBag.ClienteNombre</strong>
+        </div>
+
+        <form asp-action="RegistrarDevolucion" method="post">
+            <!-- Campo oculto correctamente enlazado -->
+            <input type="hidden" asp-for="ManejoClientesId" value="@ViewBag.ClienteId" />
+
+            <div class="mb-3">
+                <label asp-for="Monto" class="form-label"></label>
+                <input asp-for="Monto" class="form-control" step="0.01" />
+                <span asp-validation-for="Monto" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Motivo" class="form-label"></label>
+                <textarea asp-for="Motivo" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Motivo" class="text-danger"></span>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-warning px-4">Registrar</button>
+                <a asp-action="Index" class="btn btn-secondary px-4">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

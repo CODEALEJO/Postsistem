@@ -1,0 +1,26 @@
+@model Postsistem.Models.ManejoClientes
+
+@{
+    ViewData["Title"] = "Eliminar Cliente";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h3 class="text-danger mb-4 text-center">¿Seguro que deseas eliminar este cliente?</h3>
+
+        <div class="mb-3">
+            <p><strong>Nombre:</strong> @Model.NombreCliente</p>
+            <p><strong>Teléfono:</strong> @Model.Celular</p>
+            <p><strong>Saldo Pendiente:</strong> $@Model.SaldoPendiente</p>
+            <p><strong>Saldo a Favor:</strong> $@Model.SaldoAFavor</p>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex justify-content-center gap-3">
+                <button type="submit" class="btn btn-danger px-4">Eliminar</button>
+                <a asp-action="Index" class="btn btn-secondary px-4">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

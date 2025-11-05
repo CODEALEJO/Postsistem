@@ -218,6 +218,224 @@ namespace POSTSISTEM.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Postsistem.Models.AbonoCliente", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaAbono")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ManejoClientesId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Observacion")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManejoClientesId");
+
+                    b.ToTable("AbonoClientes");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Caja", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaApertura")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FechaCierre")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("SaldoFinalEfectivo")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SaldoFinalTransferencia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SaldoInicialEfectivo")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UsuarioApertura")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UsuarioCierre")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cajas");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.DevolucionGarantia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaDevolucion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ManejoClientesId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Motivo")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManejoClientesId");
+
+                    b.ToTable("DevolucionGarantias");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Factura", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cliente")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Facturas");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.ManejoClientes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Celular")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NombreCliente")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NumeroDocumento")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("SaldoAFavor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SaldoPendiente")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ManejoClientes");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.MetodoPago", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("MetodoPagos");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.MovimientoCaja", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CajaId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FormaPago")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Usuario")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("VentaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CajaId");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("MovimientoCajas");
+                });
+
             modelBuilder.Entity("Postsistem.Models.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -243,6 +461,72 @@ namespace POSTSISTEM.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.ProductoVenta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Precio")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Producto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("ProductosVenta");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Venta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CajaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CedulaCliente")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CelularCliente")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Descuento")
+                        .HasColumnType("numeric(5,2)");
+
+                    b.Property<int?>("FacturaId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NombreCliente")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CajaId");
+
+                    b.HasIndex("FacturaId");
+
+                    b.ToTable("Ventas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -294,6 +578,104 @@ namespace POSTSISTEM.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Postsistem.Models.AbonoCliente", b =>
+                {
+                    b.HasOne("Postsistem.Models.ManejoClientes", "Cliente")
+                        .WithMany("Abonos")
+                        .HasForeignKey("ManejoClientesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.DevolucionGarantia", b =>
+                {
+                    b.HasOne("Postsistem.Models.ManejoClientes", "Cliente")
+                        .WithMany("DevolucionesGarantias")
+                        .HasForeignKey("ManejoClientesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.MetodoPago", b =>
+                {
+                    b.HasOne("Postsistem.Models.Venta", "Venta")
+                        .WithMany("MetodosPago")
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.MovimientoCaja", b =>
+                {
+                    b.HasOne("Postsistem.Models.Caja", "Caja")
+                        .WithMany("Movimientos")
+                        .HasForeignKey("CajaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Postsistem.Models.Venta", "Venta")
+                        .WithMany()
+                        .HasForeignKey("VentaId");
+
+                    b.Navigation("Caja");
+
+                    b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.ProductoVenta", b =>
+                {
+                    b.HasOne("Postsistem.Models.Venta", "Venta")
+                        .WithMany("Productos")
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Venta", b =>
+                {
+                    b.HasOne("Postsistem.Models.Caja", "Caja")
+                        .WithMany()
+                        .HasForeignKey("CajaId");
+
+                    b.HasOne("Postsistem.Models.Factura", null)
+                        .WithMany("Ventas")
+                        .HasForeignKey("FacturaId");
+
+                    b.Navigation("Caja");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Caja", b =>
+                {
+                    b.Navigation("Movimientos");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Factura", b =>
+                {
+                    b.Navigation("Ventas");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.ManejoClientes", b =>
+                {
+                    b.Navigation("Abonos");
+
+                    b.Navigation("DevolucionesGarantias");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Venta", b =>
+                {
+                    b.Navigation("MetodosPago");
+
+                    b.Navigation("Productos");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,35 @@
+@model Postsistem.Models.AbonoCliente
+
+@{
+    ViewData["Title"] = "Registrar Abono";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h3 class="text-success text-center mb-4">Registrar Abono</h3>
+
+        <div class="alert alert-info text-center">
+            Cliente: <strong>@ViewBag.ClienteNombre</strong>
+        </div>
+
+        <form asp-action="RegistrarAbono" method="post">
+            <!-- Enlazado correcto con el modelo -->
+            <input type="hidden" asp-for="ManejoClientesId" value="@ViewBag.ClienteId" />
+
+            <div class="mb-3">
+                <label asp-for="Monto" class="form-label"></label>
+                <input asp-for="Monto" class="form-control" step="0.01" />
+                <span asp-validation-for="Monto" class="text-danger"></span>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success px-4">Registrar</button>
+                <a asp-action="Index" class="btn btn-secondary px-4">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,66 @@
+@model Postsistem.Models.ManejoClientes
+
+@{
+    ViewData["Title"] = "Editar Cliente";
+}
+
+<div class="container mt-4" style="max-width: 800px;">
+    <h2 class="mb-4 text-center text-warning">
+        <i class="bi bi-pencil-square"></i> Editar Cliente
+    </h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="NombreCliente" class="form-label fw-bold">Nombre Completo</label>
+                    <input asp-for="NombreCliente" class="form-control" />
+                    <span asp-validation-for="NombreCliente" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NumeroDocumento" class="form-label fw-bold">Cédula</label>
+                    <input asp-for="NumeroDocumento" class="form-control" />
+                    <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Celular" class="form-label fw-bold">Celular</label>
+                    <input asp-for="Celular" class="form-control" />
+                    <span asp-validation-for="Celular" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SaldoPendiente" class="form-label fw-bold">Saldo Pendiente ($)</label>
+                        <input asp-for="SaldoPendiente" class="form-control" />
+                        <span asp-validation-for="SaldoPendiente" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SaldoAFavor" class="form-label fw-bold">Saldo a Favor ($)</label>
+                        <input asp-for="SaldoAFavor" class="form-control" />
+                        <span asp-validation-for="SaldoAFavor" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-warning px-4">
+                        <i class="bi bi-save"></i> Guardar Cambios
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 ms-2">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

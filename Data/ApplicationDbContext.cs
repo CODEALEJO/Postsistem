@@ -15,11 +15,29 @@ namespace POSTSISTEM.Data
         {
         }
 
-         public DbSet<Producto> Productos { get; set; }
+        public DbSet<Venta> Ventas { get; set; }
+        public DbSet<ProductoVenta> ProductosVenta { get; set; }
+        public DbSet<Factura> Facturas { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<MetodoPago> MetodoPagos { get; set; }
+        public DbSet<Caja> Cajas { get; set; }
+        public DbSet<MovimientoCaja> MovimientoCajas { get; set; }
+        public DbSet<ManejoClientes> ManejoClientes { get; set; }
+        public DbSet<AbonoCliente> AbonoClientes { get; set; }
+        public DbSet<DevolucionGarantia> DevolucionGarantias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); // Necesario para Identity
+
+            // Tus configuraciones existentes...
+            modelBuilder.Entity<ProductoVenta>()
+                .Property(p => p.Precio)
+                .HasColumnType("numeric(18,2)");
+
+            modelBuilder.Entity<Venta>()
+                .Property(v => v.Descuento)
+                .HasColumnType("numeric(5,2)");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

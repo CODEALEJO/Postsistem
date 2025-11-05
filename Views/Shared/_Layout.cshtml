@@ -1,20 +1,101 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - POSTSISTEM</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/POSTSISTEM.styles.css" asp-append-version="true" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        /* Navbar centrada */
+        .nav-buttons-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .nav-button {
+            margin: 0 8px;
+            padding: 8px 16px;
+        }
+
+        .active-nav-button {
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
+    }
+
+    @if (controller == "Account" && (action == "Login" || action == "Register"))
+    {
+        <!-- Sin navbar durante login o registro -->
+    }
+    else
+    {
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 border-bottom shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold text-primary" asp-controller="Inventario" asp-action="Index">
+                    POSTSISTEM
+                </a>
+
+                <div class="collapse navbar-collapse">
+                    <div class="nav-buttons-container mx-auto">
+                        <!-- Botón de Inventario -->
+                        <a class="nav-button btn btn-outline-primary @(controller == "Inventario" ? "active-nav-button" : "")"
+                           asp-controller="Inventario" asp-action="Index">
+                            <i class="bi bi-box-seam"></i> Inventario
+                        </a>
+
+                        <!-- Botón de Manejo de Clientes -->
+                        <a class="nav-button btn btn-outline-success @(controller == "ManejoClientes" ? "active-nav-button" : "")"
+                           asp-controller="ManejoClientes" asp-action="Index">
+                            <i class="bi bi-people"></i> Manejo de Clientes
+                        </a>
+                    </div>
+
+                    <!-- Botón de Cerrar Sesión -->
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline ms-auto">
+                        <button type="submit" class="btn btn-outline-danger ms-2">
+                            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    }
+
+    <div class="container mb-5">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
+    <footer class="border-top text-muted text-center py-3 mt-auto">
+        <div class="container">
+            &copy; @DateTime.Now.Year - POSTSISTEM
+        </div>
+    </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

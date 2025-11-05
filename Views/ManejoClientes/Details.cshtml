@@ -1,0 +1,90 @@
+@model Postsistem.Models.ManejoClientes
+
+@{
+    ViewData["Title"] = "Detalles del Cliente";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h3 class="text-primary text-center mb-4">Detalles del Cliente</h3>
+
+        <dl class="row">
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">@Model.NombreCliente</dd>
+
+            <dt class="col-sm-3">Teléfono:</dt>
+            <dd class="col-sm-9">@Model.Celular</dd>
+
+            <dt class="col-sm-3">Saldo Pendiente:</dt>
+            <dd class="col-sm-9 text-danger fw-bold">$@Model.SaldoPendiente</dd>
+
+            <dt class="col-sm-3">Saldo a Favor:</dt>
+            <dd class="col-sm-9 text-success fw-bold">$@Model.SaldoAFavor</dd>
+
+            <dt class="col-sm-3">Fecha de Registro:</dt>
+            <dd class="col-sm-9">@Model.FechaRegistro.ToString("dd/MM/yyyy")</dd>
+        </dl>
+
+        <hr />
+
+        <h5 class="mt-4 text-secondary">💰 Historial de Abonos</h5>
+        @if (Model.Abonos != null && Model.Abonos.Any())
+        {
+            <table class="table table-bordered table-striped mt-3">
+                <thead class="table-success">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var abono in Model.Abonos)
+                    {
+                        <tr>
+                            <td>@abono.FechaAbono.ToString("dd/MM/yyyy")</td>
+                            <td>$@abono.Monto</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No hay abonos registrados.</p>
+        }
+
+        <h5 class="mt-4 text-secondary">🔁 Devoluciones / Garantías</h5>
+        @if (Model.DevolucionesGarantias != null && Model.DevolucionesGarantias.Any())
+        {
+            <table class="table table-bordered table-striped mt-3">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var devolucion in Model.DevolucionesGarantias)
+                    {
+                        <tr>
+                            <td>@devolucion.FechaDevolucion.ToString("dd/MM/yyyy")</td>
+                            <td>$@devolucion.Monto</td>
+                            <td>@devolucion.Motivo</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No hay devoluciones registradas.</p>
+        }
+
+        <div class="text-center mt-4">
+            <a asp-action="RegistrarAbono" asp-route-id="@Model.Id" class="btn btn-success me-2">Registrar Abono</a>
+            <a asp-action="RegistrarDevolucion" asp-route-id="@Model.Id" class="btn btn-warning me-2">Registrar Devolución</a>
+            <a asp-action="Index" class="btn btn-secondary">Volver</a>
+        </div>
+    </div>
+</div>
