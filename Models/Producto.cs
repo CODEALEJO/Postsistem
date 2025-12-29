@@ -27,6 +27,9 @@ namespace Postsistem.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal PrecioVenta { get; set; }
 
+        public ICollection<Salida>? Salidas { get; set; }
+
+
         [NotMapped]
         public decimal GananciaPorUnidad => PrecioVenta - Costo;
 

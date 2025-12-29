@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using POSTSISTEM.Data;
+using Postsistem.Data;
 
 #nullable disable
 
-namespace POSTSISTEM.Migrations
+namespace Postsistem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20251029051400_InitialCreate")]

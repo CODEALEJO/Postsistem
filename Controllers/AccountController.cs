@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using POSTSISTEM.Models;
+using Postsistem.Models;
 using Microsoft.AspNetCore.Authorization;
-using POSTSISTEM.Models;
+
 
 [Authorize]
 public class AccountController : Controller

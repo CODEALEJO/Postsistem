@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Postsistem.Models;
-using POSTSISTEM.Data;
+using Postsistem.Data;
 using System.Threading.Tasks;
 
 namespace Postsistem.Controllers

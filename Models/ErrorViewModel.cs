@@ -1,4 +1,4 @@
-namespace POSTSISTEM.Models;
+namespace Postsistem.Models;
 
 public class ErrorViewModel
 {

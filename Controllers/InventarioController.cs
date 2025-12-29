@@ -3,7 +3,7 @@ using Postsistem.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using POSTSISTEM.Data;
+using Postsistem.Data;
 
 namespace Postsistem.Controllers
 {

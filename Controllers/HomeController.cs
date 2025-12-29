@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using POSTSISTEM.Models;
+using Postsistem.Models;
 
-namespace POSTSISTEM.Controllers;
+namespace Postsistem.Controllers;
 
 public class HomeController : Controller
 {

@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using POSTSISTEM.Models;
 using Microsoft.AspNetCore.Identity;
 using Postsistem.Models;
 
-namespace POSTSISTEM.Data
+namespace Postsistem.Data
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
@@ -21,6 +20,7 @@ namespace POSTSISTEM.Data
         public DbSet<Producto> Productos { get; set; }
         public DbSet<MetodoPago> MetodoPagos { get; set; }
         public DbSet<Caja> Cajas { get; set; }
+        public DbSet<Salida> Salidas { get; set; }
         public DbSet<MovimientoCaja> MovimientoCajas { get; set; }
         public DbSet<ManejoClientes> ManejoClientes { get; set; }
         public DbSet<AbonoCliente> AbonoClientes { get; set; }

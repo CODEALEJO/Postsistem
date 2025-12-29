@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace POSTSISTEM.Models
+namespace Postsistem.Models
 {
     public class LoginViewModel
     {
