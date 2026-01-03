@@ -1,8 +1,9 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 using Postsistem.Data;
+using Microsoft.EntityFrameworkCore;
+
 
 // Configuración regional para Colombia
 var cultureInfo = new CultureInfo("es-CO");

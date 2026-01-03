@@ -491,6 +491,34 @@ namespace Postsistem.Migrations
                     b.ToTable("ProductosVenta");
                 });
 
+            modelBuilder.Entity("Postsistem.Models.Salida", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("FechaSalida")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Nota")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("Salidas");
+                });
+
             modelBuilder.Entity("Postsistem.Models.Venta", b =>
                 {
                     b.Property<int>("Id")
@@ -641,6 +669,17 @@ namespace Postsistem.Migrations
                     b.Navigation("Venta");
                 });
 
+            modelBuilder.Entity("Postsistem.Models.Salida", b =>
+                {
+                    b.HasOne("Postsistem.Models.Producto", "Producto")
+                        .WithMany("Salidas")
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("Postsistem.Models.Venta", b =>
                 {
                     b.HasOne("Postsistem.Models.Caja", "Caja")
@@ -669,6 +708,11 @@ namespace Postsistem.Migrations
                     b.Navigation("Abonos");
 
                     b.Navigation("DevolucionesGarantias");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Producto", b =>
+                {
+                    b.Navigation("Salidas");
                 });
 
             modelBuilder.Entity("Postsistem.Models.Venta", b =>

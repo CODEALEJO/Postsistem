@@ -3208,23 +3208,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\AlejandroCastrillón\\.nuget\\packages\\": {},
+    "C:\\Users\\alejo\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\AlejandroCastrillón\\OneDrive - Blackbird Labs\\Escritorio\\Postsistem\\POSTSISTEM.csproj",
+      "projectUniqueName": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Postsistem\\POSTSISTEM.csproj",
       "projectName": "POSTSISTEM",
-      "projectPath": "C:\\Users\\AlejandroCastrillón\\OneDrive - Blackbird Labs\\Escritorio\\Postsistem\\POSTSISTEM.csproj",
-      "packagesPath": "C:\\Users\\AlejandroCastrillón\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\AlejandroCastrillón\\OneDrive - Blackbird Labs\\Escritorio\\Postsistem\\obj\\",
+      "projectPath": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Postsistem\\POSTSISTEM.csproj",
+      "packagesPath": "C:\\Users\\alejo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Postsistem\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\AlejandroCastrillón\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\alejo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3250,8 +3250,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -3319,7 +3318,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.408/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

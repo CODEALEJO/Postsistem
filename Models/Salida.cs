@@ -13,7 +13,7 @@ namespace Postsistem.Models
         public int ProductoId { get; set; }
 
         [ForeignKey(nameof(ProductoId))]
-        public Producto Producto { get; set; }
+        public Producto? Producto { get; set; }
 
         [Required(ErrorMessage = "La cantidad es obligatoria")]
         [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor a 0")]

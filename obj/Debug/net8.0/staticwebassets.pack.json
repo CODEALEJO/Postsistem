@@ -178,7 +178,7 @@
     },
     {
       "Id": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Postsistem\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\POSTSISTEM.bundle.scp.css",
-      "PackagePath": "staticwebassets\\POSTSISTEM.6hfurfv9k6.bundle.scp.css"
+      "PackagePath": "staticwebassets\\POSTSISTEM.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Postsistem\\wwwroot\\css\\site.css",
@@ -431,10 +431,6 @@
     {
       "Id": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Postsistem\\wwwroot\\lib\\jquery\\dist\\jquery.slim.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.slim.min.map"
-    },
-    {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.POSTSISTEM.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
-      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.POSTSISTEM.Microsoft.AspNetCore.StaticWebAssets.props",

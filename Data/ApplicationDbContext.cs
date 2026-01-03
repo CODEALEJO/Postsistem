@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Postsistem.Models;
 
+
 namespace Postsistem.Data
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>

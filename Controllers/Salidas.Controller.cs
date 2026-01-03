@@ -61,7 +61,7 @@ namespace Postsistem.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Salida registrada correctamente.";
-            return RedirectToAction("Index", "Productos");
+            return RedirectToAction("Index", "Inventario");
         }
     }
 }

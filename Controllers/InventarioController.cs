@@ -18,7 +18,9 @@ namespace Postsistem.Controllers
 
         public async Task<IActionResult> Index(string nombre = null)
         {
-            IQueryable<Producto> productos = _context.Productos.OrderBy(p => p.Nombre);
+            IQueryable<Producto> productos = _context.Productos
+                .Include(p => p.Salidas) // ✅ CARGA EL HISTORIAL
+                .OrderBy(p => p.Nombre);
 
             if (!string.IsNullOrEmpty(nombre))
             {
