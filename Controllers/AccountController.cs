@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Postsistem.Data;
 using Postsistem.Models;
-using Microsoft.AspNetCore.Authorization;
-
+using System.Security.Claims;
 
 [Authorize]
 public class AccountController : Controller
@@ -10,15 +13,18 @@ public class AccountController : Controller
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly ILogger<AccountController> _logger;
+    private readonly ApplicationDbContext _context;
 
     public AccountController(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
-        ILogger<AccountController> logger)
+        ILogger<AccountController> logger,
+        ApplicationDbContext context)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
+        _context = context;
     }
 
     [AllowAnonymous]
@@ -34,42 +40,24 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
     {
-        ViewData["ReturnUrl"] = returnUrl;
+        if (!ModelState.IsValid)
+            return View(model);
 
-        if (ModelState.IsValid)
-        {
-            var result = await _signInManager.PasswordSignInAsync(
-                model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+        var result = await _signInManager.PasswordSignInAsync(
+            model.Email, model.Password, model.RememberMe, false);
 
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("Usuario autenticado: {Email}", model.Email);
+        if (result.Succeeded)
+            return RedirectToAction("Index", "Inventario");
 
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    return Redirect(returnUrl);
-                else
-                    return RedirectToAction("Index", "Inventario");
-            }
-
-            ModelState.AddModelError(string.Empty, "Intento de inicio de sesión no válido.");
-        }
-
+        ModelState.AddModelError("", "Credenciales inválidas");
         return View(model);
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        _logger.LogInformation("Usuario cerró sesión.");
-        return RedirectToAction("Login", "Account");
-    }
-
-    [AllowAnonymous] // Permite acceso sin autenticación
+    [AllowAnonymous]
     [HttpGet]
     public IActionResult Register()
     {
+        ViewBag.Locales = new SelectList(_context.Locales, "Id", "Nombre");
         return View();
     }
 
@@ -78,46 +66,57 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var user = new IdentityUser { UserName = model.Email, Email = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                // Asegurarse que el rol "User" existe
-                var roleManager = HttpContext.RequestServices.GetRequiredService<RoleManager<IdentityRole>>();
-                if (!await roleManager.RoleExistsAsync("User"))
-                {
-                    await roleManager.CreateAsync(new IdentityRole("User"));
-                }
-
-                // Asignar rol básico
-                await _userManager.AddToRoleAsync(user, "User");
-
-                // Iniciar sesión automáticamente después del registro
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                // Después del registro, redirigir al login
-                _logger.LogInformation("Usuario registrado correctamente: {Email}", model.Email);
-                return RedirectToAction("Login", "Account");
-
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            ViewBag.Locales = new SelectList(_context.Locales, "Id", "Nombre");
+            return View(model);
         }
 
-        return View(model);
+        var user = new IdentityUser
+        {
+            UserName = model.Email,
+            Email = model.Email
+        };
+
+        var result = await _userManager.CreateAsync(user, model.Password);
+
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+
+            ViewBag.Locales = new SelectList(_context.Locales, "Id", "Nombre");
+            return View(model);
+        }
+
+        // RELACIÓN USUARIO - LOCAL
+        _context.UsuarioLocales.Add(new UsuarioLocal
+        {
+            UserId = user.Id,
+            LocalId = model.LocalId
+        });
+
+        await _context.SaveChangesAsync();
+
+        await _signInManager.SignInAsync(user, false);
+        return RedirectToAction("Index", "Inventario");
     }
 
-    private IActionResult RedirectToLocal(string returnUrl)
+    [HttpPost]
+    public async Task<IActionResult> Logout()
     {
-        if (Url.IsLocalUrl(returnUrl))
-        {
-            return Redirect(returnUrl);
-        }
-        return RedirectToAction("Index", "Inventario");
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Login");
+    }
+
+    // MÉTODO CLAVE
+    protected int ObtenerLocalDelUsuario()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        return _context.UsuarioLocales
+            .Where(u => u.UserId == userId)
+            .Select(u => u.LocalId)
+            .First();
     }
 }

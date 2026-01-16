@@ -10,30 +10,38 @@ namespace Postsistem.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "El nombre del producto es obligatorio")]
-        public string Producto { get; set; } = string.Empty;
+        // Relación opcional con inventario
+        public int? ProductoId { get; set; }
+        public Producto? Producto { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser al menos 1")]
+        // Nombre congelado en la venta (histórico)
+        [Required]
+        [MaxLength(150)]
+        public string NombreProducto { get; set; } = string.Empty;
+
+        [Range(1, int.MaxValue)]
         public int Cantidad { get; set; }
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que cero")]
+    
+
+        // Descuento en VALOR (no porcentaje)
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Precio { get; set; }
+        public decimal DescuentoValor { get; set; }
 
+        // Precio final unitario
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal PrecioFinal { get; set; }
+
+        // Relación con venta
         public int VentaId { get; set; }
+        public Venta Venta { get; set; }
 
-        [ForeignKey("VentaId")]
-        public Venta? Venta { get; set; }
+        // ====== CALCULADOS ======
 
-        // Modificar el cálculo del Total para manejar redondeo consistente
         [NotMapped]
-        public decimal Total => Math.Round(Cantidad * Precio, 2, MidpointRounding.AwayFromZero);
-
+        public decimal Total => Math.Round(Cantidad * PrecioFinal, 2);
 
         [NotMapped]
         public string TotalFormateado => Total.ToString("N0", CultureInfo.InvariantCulture);
-
-        [NotMapped]
-        public string PrecioFormateado => Precio.ToString("N0", CultureInfo.InvariantCulture);
     }
 }

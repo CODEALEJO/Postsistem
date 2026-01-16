@@ -15,6 +15,9 @@ namespace Postsistem.Data
         {
         }
 
+
+        public DbSet<Local> Locales { get; set; }
+        public DbSet<UsuarioLocal> UsuarioLocales { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<ProductoVenta> ProductosVenta { get; set; }
         public DbSet<Factura> Facturas { get; set; }
@@ -29,16 +32,20 @@ namespace Postsistem.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // Necesario para Identity
+            base.OnModelCreating(modelBuilder);
 
-            // Tus configuraciones existentes...
             modelBuilder.Entity<ProductoVenta>()
-                .Property(p => p.Precio)
+                .Property(p => p.PrecioFinal)
                 .HasColumnType("numeric(18,2)");
 
             modelBuilder.Entity<Venta>()
-                .Property(v => v.Descuento)
-                .HasColumnType("numeric(5,2)");
+                .Property(v => v.DescuentoTotal)
+                .HasColumnType("numeric(18,2)");
+
+            modelBuilder.Entity<Local>().HasData(
+   new Local { Id = 1, Nombre = "Tris de Amor" },
+   new Local { Id = 2, Nombre = "Los Brothers" }
+);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

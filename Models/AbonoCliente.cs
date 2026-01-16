@@ -23,5 +23,9 @@ namespace Postsistem.Models
 
         [MaxLength(200)]
         public string? Observacion { get; set; }
+
+        public int LocalId { get; set; }
+        public Local Local { get; set; }
+
     }
 }

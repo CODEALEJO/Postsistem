@@ -42,7 +42,8 @@ namespace Postsistem.Models
         public int? VentaId { get; set; }
         public Venta? Venta { get; set; }
 
-
+        public int LocalId { get; set; }
+        public Local Local { get; set; }
 
         [Required]
         public int CajaId { get; set; }

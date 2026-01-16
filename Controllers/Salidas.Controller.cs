@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Postsistem.Data;
 using Postsistem.Models;
+using System.Security.Claims;
 
 namespace Postsistem.Controllers
 {
@@ -45,6 +46,18 @@ namespace Postsistem.Controllers
             if (!ModelState.IsValid)
                 return View(producto);
 
+            // ✅ Obtener el usuario actual
+            var usuarioActual = User.Identity?.Name ?? "Usuario no autenticado";
+            
+            // ✅ Obtener el local del usuario
+            int localId = ObtenerLocalDelUsuario();
+            
+            if (localId == 0)
+            {
+                TempData["ErrorMessage"] = "El usuario no tiene un local asignado.";
+                return View(producto);
+            }
+
             // ✅ Descontar stock
             producto.Cantidad -= cantidad;
 
@@ -53,15 +66,39 @@ namespace Postsistem.Controllers
             {
                 ProductoId = productoId,
                 Cantidad = cantidad,
-                Nota = nota
+                Nota = nota,
+                Usuario = usuarioActual, // 🔥 ASIGNAR USUARIO
+                LocalId = localId,       // 🔥 ASIGNAR LOCAL
+                Tipo = TipoSalida.Ajuste // 🔥 ASIGNAR TIPO (puedes cambiarlo según necesites)
             };
 
             _context.Salidas.Add(salida);
             _context.Productos.Update(producto);
-            await _context.SaveChangesAsync();
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Salida registrada correctamente.";
+                return RedirectToAction("Index", "Inventario");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al registrar la salida: {ex.Message}";
+                return View(producto);
+            }
+        }
 
-            TempData["SuccessMessage"] = "Salida registrada correctamente.";
-            return RedirectToAction("Index", "Inventario");
+        private int ObtenerLocalDelUsuario()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return 0;
+
+            return _context.UsuarioLocales
+                .Where(u => u.UserId == userId)
+                .Select(u => u.LocalId)
+                .FirstOrDefault();
         }
     }
 }

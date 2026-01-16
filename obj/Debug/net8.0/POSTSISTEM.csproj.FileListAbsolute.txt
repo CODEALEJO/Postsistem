@@ -1260,16 +1260,6 @@ C:\Users\AlejandroCastrillón\OneDrive - Blackbird Labs\Escritorio\Postsistem\ob
 C:\Users\AlejandroCastrillón\OneDrive - Blackbird Labs\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.pdb
 C:\Users\AlejandroCastrillón\OneDrive - Blackbird Labs\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.genruntimeconfig.cache
 C:\Users\AlejandroCastrillón\OneDrive - Blackbird Labs\Escritorio\Postsistem\obj\Debug\net8.0\ref\POSTSISTEM.dll
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.csproj.AssemblyReference.cache
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.AssemblyInfoInputs.cache
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.AssemblyInfo.cs
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.csproj.CoreCompileInputs.cache
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.RazorAssemblyInfo.cache
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.RazorAssemblyInfo.cs
-C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.sourcelink.json
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\bin\Debug\net8.0\appsettings.json
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\bin\Debug\net8.0\global.json
@@ -1664,6 +1654,16 @@ C:\Users\alejo\OneDrive\Escritorio\Postsistem\bin\Debug\net8.0\ru\Microsoft.Code
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.csproj.AssemblyReference.cache
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.AssemblyInfoInputs.cache
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.AssemblyInfo.cs
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.csproj.CoreCompileInputs.cache
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.RazorAssemblyInfo.cache
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.RazorAssemblyInfo.cs
+C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\POSTSISTEM.sourcelink.json
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\alejo\OneDrive\Escritorio\Postsistem\obj\Debug\net8.0\staticwebassets\msbuild.POSTSISTEM.Microsoft.AspNetCore.StaticWebAssets.props

@@ -1,14 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@inject Postsistem.Data.ApplicationDbContext _context
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - POSTSISTEM</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
         body {
@@ -21,7 +24,6 @@
             flex: 1;
         }
 
-        /* Navbar centrada */
         .nav-buttons-container {
             display: flex;
             justify-content: center;
@@ -44,65 +46,96 @@
     </style>
 </head>
 <body>
-    @{
-        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
-        var action = ViewContext.RouteData.Values["action"]?.ToString();
-    }
 
-    @if (controller == "Account" && (action == "Login" || action == "Register"))
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string userName = User.Identity?.Name;
+    string nombreLocal = "";
+
+    if (User.Identity.IsAuthenticated)
     {
-        <!-- Sin navbar durante login o registro -->
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var localId = _context.UsuarioLocales
+            .Where(ul => ul.UserId == userId)
+            .Select(ul => ul.LocalId)
+            .FirstOrDefault();
+
+        if (localId > 0)
+        {
+            nombreLocal = _context.Locales
+                .Where(l => l.Id == localId)
+                .Select(l => l.Nombre)
+                .FirstOrDefault();
+        }
     }
-    else
-    {
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 border-bottom shadow-sm">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold text-primary" asp-controller="Inventario" asp-action="Index">
-                    POSTSISTEM
-                </a>
+}
 
-                <div class="collapse navbar-collapse">
-                    <div class="nav-buttons-container mx-auto">
-                        <!-- Botón de Inventario -->
-                        <a class="nav-button btn btn-outline-primary @(controller == "Inventario" ? "active-nav-button" : "")"
-                           asp-controller="Inventario" asp-action="Index">
-                            <i class="bi bi-box-seam"></i> Inventario
-                        </a>
+@if (controller != "Account" || (action != "Login" && action != "Register"))
+{
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 border-bottom shadow-sm">
+        <div class="container-fluid">
 
-                        <!-- Botón de Manejo de Clientes -->
-                        <a class="nav-button btn btn-outline-success @(controller == "ManejoClientes" ? "active-nav-button" : "")"
-                           asp-controller="ManejoClientes" asp-action="Index">
-                            <i class="bi bi-people"></i> Manejo de Clientes
-                        </a>
-                    </div>
+            <a class="navbar-brand fw-bold text-primary"
+               asp-controller="Inventario" asp-action="Index">
+                POSTSISTEM
+            </a>
 
-                    <!-- Botón de Cerrar Sesión -->
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline ms-auto">
-                        <button type="submit" class="btn btn-outline-danger ms-2">
+            <div class="collapse navbar-collapse">
+
+                <div class="nav-buttons-container mx-auto">
+                    <a class="nav-button btn btn-outline-primary @(controller == "Inventario" ? "active-nav-button" : "")"
+                       asp-controller="Inventario" asp-action="Index">
+                        <i class="bi bi-box-seam"></i> Inventario
+                    </a>
+
+                    <a class="nav-button btn btn-outline-success @(controller == "ManejoClientes" ? "active-nav-button" : "")"
+                       asp-controller="ManejoClientes" asp-action="Index">
+                        <i class="bi bi-people"></i> Manejo de Clientes
+                    </a>
+                </div>
+
+                <div class="d-flex align-items-center ms-auto">
+                    <span class="me-3 text-muted">
+                        <i class="bi bi-person-circle"></i> @userName
+                        @if (!string.IsNullOrEmpty(nombreLocal))
+                        {
+                            <span class="badge bg-secondary ms-2">@nombreLocal</span>
+                        }
+                    </span>
+
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-outline-danger">
                             <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                         </button>
                     </form>
                 </div>
+
             </div>
-        </nav>
-    }
-
-    <div class="container mb-5">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top text-muted text-center py-3 mt-auto">
-        <div class="container">
-            &copy; @DateTime.Now.Year - POSTSISTEM
         </div>
-    </footer>
+    </nav>
+}
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<div class="container mb-5">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top text-muted text-center py-3 mt-auto">
+    <div class="container">
+        &copy; @DateTime.Now.Year - POSTSISTEM
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

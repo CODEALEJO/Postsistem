@@ -41,6 +41,9 @@ namespace Postsistem.Models
         [Display(Name = "Usuario que cierra")]
         public string? UsuarioCierre { get; set; }
 
+        public int LocalId { get; set; }
+        public Local Local { get; set; }
+
         [NotMapped]
         [Display(Name = "Estado")]
         public EstadoCaja Estado => FechaCierre == null ? EstadoCaja.Abierta : EstadoCaja.Cerrada;

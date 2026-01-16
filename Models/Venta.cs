@@ -14,9 +14,8 @@ namespace Postsistem.Models
 
         public int Id { get; set; }
 
-        [DataType(DataType.DateTime)]
-        [Display(Name = "Fecha de Venta")]
         public DateTime Fecha { get; set; } = DateTime.UtcNow;
+
         public string? NombreCliente { get; set; }
         public string? CelularCliente { get; set; }
         public string? CedulaCliente { get; set; }
@@ -24,27 +23,33 @@ namespace Postsistem.Models
         public List<ProductoVenta> Productos { get; set; }
         public List<MetodoPago> MetodosPago { get; set; }
 
-        [Range(0, 100, ErrorMessage = "El descuento debe estar entre 0 y 100%")]
-        [Column(TypeName = "decimal(5,2)")]
-        public decimal Descuento { get; set; } = 0;
+        // 🔑 CLAVE
+        public int LocalId { get; set; }
+        public Local Local { get; set; }
 
+        // Descuento GLOBAL en VALOR
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal DescuentoTotal { get; set; }
 
-        // Modificar la relación con Caja para que sea opcional
+        // Caja
         public int? CajaId { get; set; }
         public Caja? Caja { get; set; }
 
-        [NotMapped]
-        public decimal Subtotal => Productos?.Sum(p => p.Total) ?? 0;
+       /* ===== CÁLCULOS ===== */
 
         [NotMapped]
-        public decimal Total => Subtotal * (1 - Descuento / 100m);
-
+        public decimal Subtotal => Productos.Sum(p => p.Total);
 
         [NotMapped]
-        public decimal TotalPagado => MetodosPago?.Sum(m => m.Valor) ?? 0;
+        public decimal Total => Subtotal - DescuentoTotal;
+
+        [NotMapped]
+        public decimal TotalPagado => MetodosPago.Sum(m => m.Valor);
 
         [NotMapped]
         public decimal SaldoPendiente => Total - TotalPagado;
+
+        /* ===== FORMATEO ===== */
 
         [NotMapped]
         public string SubtotalFormateado => Subtotal.ToString("N0", CultureInfo.InvariantCulture);
@@ -53,7 +58,7 @@ namespace Postsistem.Models
         public string TotalFormateado => Total.ToString("N0", CultureInfo.InvariantCulture);
 
         [NotMapped]
-        public string DescuentoFormateado => (Subtotal * Descuento / 100m).ToString("N0", CultureInfo.InvariantCulture);
+        public string DescuentoFormateado => DescuentoTotal.ToString("N0", CultureInfo.InvariantCulture);
 
         [NotMapped]
         public string TotalPagadoFormateado => TotalPagado.ToString("N0", CultureInfo.InvariantCulture);

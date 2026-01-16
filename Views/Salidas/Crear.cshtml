@@ -7,6 +7,24 @@
 <div class="container mt-4" style="max-width: 600px;">
     <h3 class="mb-4 text-center">Registrar Salida</h3>
 
+    <!-- Mostrar mensajes de éxito o error -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Mostrar errores de validación -->
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="alert alert-danger">
@@ -17,37 +35,192 @@
         </div>
     }
 
-    <form asp-action="Crear" method="post">
-        @Html.AntiForgeryToken()
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Crear" method="post" id="salidaForm">
+                @Html.AntiForgeryToken()
 
-        <input type="hidden" name="productoId" value="@Model.Id" />
+                <input type="hidden" name="productoId" value="@Model.Id" />
 
-        <div class="mb-3">
-            <label class="form-label">Producto</label>
-            <input class="form-control" value="@Model.Nombre" readonly />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Producto</label>
+                    <input class="form-control form-control-lg" value="@Model.Nombre" readonly 
+                           style="font-weight: 600; background-color: #f8f9fa;" />
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Stock actual</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-box-seam"></i>
+                            </span>
+                            <input type="text" class="form-control" value="@Model.Cantidad unidades" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Precio de venta</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" value="@Model.PrecioVentaFormateado" readonly />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="cantidad" class="form-label fw-bold">Cantidad a retirar *</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-dash-circle"></i>
+                        </span>
+                        <input type="number" 
+                               name="cantidad" 
+                               id="cantidad" 
+                               class="form-control" 
+                               min="1" 
+                               max="@Model.Cantidad"
+                               value="1"
+                               required 
+                               oninput="validarCantidad(this)" />
+                        <span class="input-group-text">unidades</span>
+                    </div>
+                    <div class="form-text">
+                        <span id="stock-info" class="text-info">Máximo disponible: @Model.Cantidad</span>
+                        <span id="error-cantidad" class="text-danger d-block"></span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="nota" class="form-label fw-bold">Motivo / Nota (opcional)</label>
+                    <textarea name="nota" 
+                              id="nota" 
+                              class="form-control" 
+                              rows="3"
+                              placeholder="Ejemplo: Garantía, cambio, daño, pérdida, regalo, devolución..."></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                    <a asp-action="Index" asp-controller="Inventario" class="btn btn-outline-danger btn-lg">
+                        <i class="bi bi-arrow-left"></i> Volver al Inventario
+                    </a>
+
+                    <button type="submit" class="btn btn-success btn-lg" id="btnSubmit">
+                        <i class="bi bi-check-circle"></i> Registrar Salida
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label for="cantidad" class="form-label">Cantidad a retirar</label>
-            <input type="number" name="cantidad" id="cantidad" class="form-control" min="1" max="@Model.Cantidad"
-                required />
-            <small class="text-muted">Disponible: @Model.Cantidad</small>
-        </div>
-
-        <div class="mb-3">
-            <label for="nota" class="form-label">Motivo / Nota</label>
-            <textarea name="nota" id="nota" class="form-control" rows="3"
-                placeholder="Garantía, cambio, daño, pérdida..."></textarea>
-        </div>
-
-        <div class="d-flex justify-content-between">
-            <a asp-action="Index" asp-controller="Inventario" class="btn btn-danger">
-                Volver
-            </a>
-
-            <button type="submit" class="btn btn-success">
-                Registrar Salida
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        function validarCantidad(input) {
+            const maxCantidad = @Model.Cantidad;
+            const cantidad = parseInt(input.value) || 0;
+            const errorSpan = document.getElementById('error-cantidad');
+            const stockInfo = document.getElementById('stock-info');
+            const btnSubmit = document.getElementById('btnSubmit');
+            
+            // Actualizar información de stock
+            const restante = maxCantidad - cantidad;
+            stockInfo.textContent = `Después de la salida quedarán: ${restante} unidades`;
+            
+            if (cantidad > maxCantidad) {
+                input.classList.add('is-invalid');
+                errorSpan.textContent = `Error: No puede retirar más de ${maxCantidad} unidades`;
+                btnSubmit.disabled = true;
+                return false;
+            } else if (cantidad <= 0) {
+                input.classList.add('is-invalid');
+                errorSpan.textContent = 'Error: La cantidad debe ser mayor a 0';
+                btnSubmit.disabled = true;
+                return false;
+            } else {
+                input.classList.remove('is-invalid');
+                errorSpan.textContent = '';
+                btnSubmit.disabled = false;
+                return true;
+            }
+        }
+
+        // Opción 1: Con confirmación SweetAlert
+        document.getElementById('salidaForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevenir envío inmediato
+            
+            const cantidadInput = document.getElementById('cantidad');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const form = this;
+            
+            if (!validarCantidad(cantidadInput)) {
+                return;
+            }
+            
+            // Deshabilitar botón para evitar doble envío
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="bi bi-hourglass-split"></i> Procesando...';
+            
+            // Mostrar confirmación
+            Swal.fire({
+                title: '¿Confirmar salida?',
+                html: `Vas a retirar <b>${cantidadInput.value}</b> unidades de <b>@Model.Nombre</b><br>
+                       <small>Stock restante: ${@Model.Cantidad - parseInt(cantidadInput.value)} unidades</small>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, registrar salida',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#dc3545',
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    // Crear un FormData para enviar
+                    const formData = new FormData(form);
+                    
+                    return fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            return response;
+                        } else {
+                            throw new Error('Error en la respuesta del servidor');
+                        }
+                    }).catch(error => {
+                        Swal.showValidationMessage(`Error: ${error.message}`);
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir al inventario después de éxito
+                    window.location.href = '@Url.Action("Index", "Inventario")';
+                } else if (result.isDismissed) {
+                    // Si cancela, reactivar botón
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="bi bi-check-circle"></i> Registrar Salida';
+                }
+            }).catch(() => {
+                // En caso de error, reactivar botón
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="bi bi-check-circle"></i> Registrar Salida';
+            });
+        });
+
+        // Inicializar validación
+        document.addEventListener('DOMContentLoaded', function() {
+            validarCantidad(document.getElementById('cantidad'));
+            
+            // Auto-enfocar el campo de cantidad
+            document.getElementById('cantidad').focus();
+            document.getElementById('cantidad').select();
+        });
+    </script>
+}

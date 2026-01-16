@@ -4,6 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Postsistem.Models
 {
+
+      public enum TipoSalida
+    {
+        Garantia = 1,
+        Regalo = 2,
+        Ajuste = 3
+    }
+    
     public class Salida
     {
         [Key]
@@ -23,5 +31,13 @@ namespace Postsistem.Models
         public string? Nota { get; set; }
 
         public DateTime FechaSalida { get; set; } = DateTime.Now;
+
+        public int LocalId { get; set; }
+        public Local Local { get; set; }
+
+        public string Usuario { get; set; }
+
+        public TipoSalida Tipo { get; set; } // Garantia, Regalo, Ajuste
+
     }
 }

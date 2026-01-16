@@ -9,11 +9,11 @@ using Postsistem.Data;
 
 #nullable disable
 
-namespace Postsistem.Migrations
+namespace POSTSISTEM.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260103000745_fix_nullable_producto_salida")]
-    partial class fix_nullable_producto_salida
+    [Migration("20260114022555_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -232,6 +232,9 @@ namespace Postsistem.Migrations
                     b.Property<DateTime>("FechaAbono")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ManejoClientesId")
                         .HasColumnType("integer");
 
@@ -243,6 +246,8 @@ namespace Postsistem.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocalId");
 
                     b.HasIndex("ManejoClientesId");
 
@@ -263,6 +268,9 @@ namespace Postsistem.Migrations
                     b.Property<DateTime?>("FechaCierre")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("SaldoFinalEfectivo")
                         .HasColumnType("decimal(18,2)");
 
@@ -280,6 +288,8 @@ namespace Postsistem.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocalId");
 
                     b.ToTable("Cajas");
                 });
@@ -332,6 +342,35 @@ namespace Postsistem.Migrations
                     b.ToTable("Facturas");
                 });
 
+            modelBuilder.Entity("Postsistem.Models.Local", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locales");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Tris de Amor"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Los Brothers"
+                        });
+                });
+
             modelBuilder.Entity("Postsistem.Models.ManejoClientes", b =>
                 {
                     b.Property<int>("Id")
@@ -346,6 +385,9 @@ namespace Postsistem.Migrations
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("NombreCliente")
                         .IsRequired()
@@ -364,6 +406,8 @@ namespace Postsistem.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocalId");
 
                     b.ToTable("ManejoClientes");
                 });
@@ -417,6 +461,9 @@ namespace Postsistem.Migrations
                     b.Property<int>("FormaPago")
                         .HasColumnType("integer");
 
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)");
 
@@ -433,6 +480,8 @@ namespace Postsistem.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CajaId");
+
+                    b.HasIndex("LocalId");
 
                     b.HasIndex("VentaId");
 
@@ -453,6 +502,9 @@ namespace Postsistem.Migrations
                     b.Property<decimal>("Costo")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -462,6 +514,8 @@ namespace Postsistem.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocalId");
 
                     b.ToTable("Productos");
                 });
@@ -477,17 +531,26 @@ namespace Postsistem.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Precio")
+                    b.Property<decimal>("DescuentoValor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NombreProducto")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<decimal>("PrecioFinal")
                         .HasColumnType("numeric(18,2)");
 
-                    b.Property<string>("Producto")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int?>("ProductoId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("VentaId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
 
                     b.HasIndex("VentaId");
 
@@ -508,6 +571,9 @@ namespace Postsistem.Migrations
                     b.Property<DateTime>("FechaSalida")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Nota")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -515,11 +581,44 @@ namespace Postsistem.Migrations
                     b.Property<int>("ProductoId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Usuario")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("LocalId");
 
                     b.HasIndex("ProductoId");
 
                     b.ToTable("Salidas");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.UsuarioLocal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocalId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UsuarioLocales");
                 });
 
             modelBuilder.Entity("Postsistem.Models.Venta", b =>
@@ -539,14 +638,17 @@ namespace Postsistem.Migrations
                     b.Property<string>("CelularCliente")
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Descuento")
-                        .HasColumnType("numeric(5,2)");
+                    b.Property<decimal>("DescuentoTotal")
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<int?>("FacturaId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LocalId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("NombreCliente")
                         .HasColumnType("text");
@@ -556,6 +658,8 @@ namespace Postsistem.Migrations
                     b.HasIndex("CajaId");
 
                     b.HasIndex("FacturaId");
+
+                    b.HasIndex("LocalId");
 
                     b.ToTable("Ventas");
                 });
@@ -613,6 +717,12 @@ namespace Postsistem.Migrations
 
             modelBuilder.Entity("Postsistem.Models.AbonoCliente", b =>
                 {
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany()
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Postsistem.Models.ManejoClientes", "Cliente")
                         .WithMany("Abonos")
                         .HasForeignKey("ManejoClientesId")
@@ -620,6 +730,19 @@ namespace Postsistem.Migrations
                         .IsRequired();
 
                     b.Navigation("Cliente");
+
+                    b.Navigation("Local");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Caja", b =>
+                {
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany("Cajas")
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Local");
                 });
 
             modelBuilder.Entity("Postsistem.Models.DevolucionGarantia", b =>
@@ -631,6 +754,17 @@ namespace Postsistem.Migrations
                         .IsRequired();
 
                     b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.ManejoClientes", b =>
+                {
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany()
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Local");
                 });
 
             modelBuilder.Entity("Postsistem.Models.MetodoPago", b =>
@@ -652,35 +786,87 @@ namespace Postsistem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany()
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Postsistem.Models.Venta", "Venta")
                         .WithMany()
                         .HasForeignKey("VentaId");
 
                     b.Navigation("Caja");
 
+                    b.Navigation("Local");
+
                     b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Producto", b =>
+                {
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany("Productos")
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Local");
                 });
 
             modelBuilder.Entity("Postsistem.Models.ProductoVenta", b =>
                 {
+                    b.HasOne("Postsistem.Models.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId");
+
                     b.HasOne("Postsistem.Models.Venta", "Venta")
                         .WithMany("Productos")
                         .HasForeignKey("VentaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Producto");
+
                     b.Navigation("Venta");
                 });
 
             modelBuilder.Entity("Postsistem.Models.Salida", b =>
                 {
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany()
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Postsistem.Models.Producto", "Producto")
                         .WithMany("Salidas")
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Local");
+
                     b.Navigation("Producto");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.UsuarioLocal", b =>
+                {
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany()
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Local");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Postsistem.Models.Venta", b =>
@@ -693,7 +879,15 @@ namespace Postsistem.Migrations
                         .WithMany("Ventas")
                         .HasForeignKey("FacturaId");
 
+                    b.HasOne("Postsistem.Models.Local", "Local")
+                        .WithMany("Ventas")
+                        .HasForeignKey("LocalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Caja");
+
+                    b.Navigation("Local");
                 });
 
             modelBuilder.Entity("Postsistem.Models.Caja", b =>
@@ -703,6 +897,15 @@ namespace Postsistem.Migrations
 
             modelBuilder.Entity("Postsistem.Models.Factura", b =>
                 {
+                    b.Navigation("Ventas");
+                });
+
+            modelBuilder.Entity("Postsistem.Models.Local", b =>
+                {
+                    b.Navigation("Cajas");
+
+                    b.Navigation("Productos");
+
                     b.Navigation("Ventas");
                 });
 

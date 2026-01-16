@@ -41,6 +41,9 @@ namespace Postsistem.Models
         public List<AbonoCliente> Abonos { get; set; }
         public List<DevolucionGarantia> DevolucionesGarantias { get; set; }
 
+        public int LocalId { get; set; }
+        public Local Local { get; set; }
+
         // Propiedades calculadas
         [NotMapped]
         public decimal TotalAbonado => Abonos?.Sum(a => a.Monto) ?? 0;

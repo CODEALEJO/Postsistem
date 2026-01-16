@@ -5,7 +5,6 @@ namespace Postsistem.Models
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
         public string Email { get; set; } = string.Empty; // Inicializa con valor por defecto
 
         [Required]
@@ -19,7 +18,6 @@ namespace Postsistem.Models
     public class RegisterViewModel
     {
         [Required]
-        [EmailAddress]
         public string Email { get; set; }
 
         [Required]
@@ -30,5 +28,7 @@ namespace Postsistem.Models
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
         public string ConfirmPassword { get; set; }
+        [Required(ErrorMessage = "Debe seleccionar un local")]
+        public int LocalId { get; set; }
     }
 }

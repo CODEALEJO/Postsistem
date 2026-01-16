@@ -7,7 +7,23 @@
 <div class="container mt-4">
     <h2 class="mb-3">Agregar Varios Productos</h2>
 
-    <form asp-action="CreateMultiple" method="post" id="productosForm">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="CreateMultiple" method="post" id="productForm">
         @Html.AntiForgeryToken()
 
         <div id="productosContainer">
@@ -16,92 +32,189 @@
                 <div class="card mb-3 producto-item p-3 shadow-sm">
                     <div class="row">
                         <div class="col-md-4">
-                            <label asp-for="@Model[i].Nombre" class="form-label"></label>
-                            <input asp-for="@Model[i].Nombre" class="form-control" />
-                            <span asp-validation-for="@Model[i].Nombre" class="text-danger"></span>
+                            <label class="form-label">Nombre *</label>
+                            <input name="[@i].Nombre" class="form-control" placeholder="Nombre del producto" required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="[@i].Nombre"
+                                data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2">
-                            <label asp-for="@Model[i].Cantidad" class="form-label"></label>
-                            <input asp-for="@Model[i].Cantidad" class="form-control" />
+                            <label class="form-label">Cantidad *</label>
+                            <input name="[@i].Cantidad" type="number" class="form-control" min="1" required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="[@i].Cantidad"
+                                data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2">
-                            <label asp-for="@Model[i].Costo" class="form-label"></label>
-                            <input asp-for="@Model[i].Costo" class="form-control costoInput" />
+                            <label class="form-label">Costo *</label>
+                            <input name="[@i].Costo" type="number" step="0.01" min="0.01" class="form-control" required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="[@i].Costo"
+                                data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2">
-                            <label asp-for="@Model[i].PrecioVenta" class="form-label"></label>
-                            <input asp-for="@Model[i].PrecioVenta" class="form-control precioInput" />
+                            <label class="form-label">Precio Venta *</label>
+                            <input name="[@i].PrecioVenta" type="number" step="0.01" min="0.01" class="form-control"
+                                required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="[@i].PrecioVenta"
+                                data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2 d-flex align-items-end">
-                            <button type="button" class="btn btn-danger btn-remove">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            @if (i > 0)
+                            {
+                                <button type="button" class="btn btn-danger btn-remove">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>
             }
         </div>
 
-        <div class="mb-3">
-            <button type="button" class="btn btn-primary" id="btnAddProducto">
-                <i class="bi bi-plus-circle"></i> Agregar otro producto
-            </button>
-        </div>
+        <button type="button" class="btn btn-primary mb-3" id="btnAddProducto">
+            <i class="bi bi-plus-circle"></i> Agregar otro producto
+        </button>
 
-        <div class="mb-3">
-            <button type="submit" class="btn btn-success">
-                <i class="bi bi-save"></i> Guardar Todos
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success" id="btnSubmit">
+                <i class="bi bi-save"></i> Guardar Todos los Productos
             </button>
             <a asp-action="Index" class="btn btn-danger">
-                <i class="bi bi-arrow-left"></i> Cancelar
+                <i class="bi bi-x-circle"></i> Cancelar
             </a>
         </div>
     </form>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const container = document.getElementById("productosContainer");
-            const btnAdd = document.getElementById("btnAddProducto");
+        // Inicializar con el índice correcto
+        let productIndex = @Model.Count;
 
-            btnAdd.addEventListener("click", function () {
-                const index = container.querySelectorAll(".producto-item").length;
-                const newItem = document.createElement("div");
-                newItem.classList.add("card", "mb-3", "producto-item", "p-3", "shadow-sm");
-                newItem.innerHTML = `
+        // Función para reindexar todos los campos
+        function reindexFields() {
+            const container = document.getElementById('productosContainer');
+            const items = container.querySelectorAll('.producto-item');
+
+            items.forEach((item, index) => {
+                // Actualizar todos los inputs
+                const inputs = item.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const nameAttr = input.getAttribute('name');
+                    if (nameAttr) {
+                        // Extraer el nombre del campo (ej: "Nombre", "Cantidad", etc.)
+                        const fieldName = nameAttr.match(/\[(\d+)\]\.(.+)/);
+                        if (fieldName && fieldName.length >= 3) {
+                            const newName = `[${index}].${fieldName[2]}`;
+                            input.setAttribute('name', newName);
+                            input.setAttribute('id', `_${index}_${fieldName[2]}`);
+
+                            // Actualizar también los span de validación si existen
+                            const validationSpan = input.nextElementSibling;
+                            if (validationSpan && validationSpan.classList.contains('field-validation-valid')) {
+                                validationSpan.setAttribute('data-valmsg-for', newName);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Actualizar el índice global
+            productIndex = items.length;
+        }
+
+        // Agregar nuevo producto
+        document.getElementById("btnAddProducto").addEventListener("click", function () {
+            const container = document.getElementById("productosContainer");
+
+            const html = `
+                <div class="card mb-3 producto-item p-3 shadow-sm">
                     <div class="row">
                         <div class="col-md-4">
-                            <label for="productos_${index}__Nombre" class="form-label">Nombre</label>
-                            <input class="form-control" type="text" name="[${index}].Nombre" id="productos_${index}__Nombre" />
+                            <label class="form-label">Nombre *</label>
+                            <input name="[${productIndex}].Nombre" class="form-control" 
+                                   placeholder="Nombre del producto" required />
+                            <span class="text-danger field-validation-valid" 
+                                  data-valmsg-for="[${productIndex}].Nombre" data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2">
-                            <label for="productos_${index}__Cantidad" class="form-label">Cantidad</label>
-                            <input class="form-control" type="number" name="[${index}].Cantidad" id="productos_${index}__Cantidad" />
+                            <label class="form-label">Cantidad *</label>
+                            <input name="[${productIndex}].Cantidad" type="number" 
+                                   class="form-control" min="1" required />
+                            <span class="text-danger field-validation-valid" 
+                                  data-valmsg-for="[${productIndex}].Cantidad" data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2">
-                            <label for="productos_${index}__Costo" class="form-label">Costo</label>
-                            <input class="form-control" type="number" name="[${index}].Costo" id="productos_${index}__Costo" />
+                            <label class="form-label">Costo *</label>
+                            <input name="[${productIndex}].Costo" type="number" 
+                                   step="0.01" min="0.01" class="form-control" required />
+                            <span class="text-danger field-validation-valid" 
+                                  data-valmsg-for="[${productIndex}].Costo" data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2">
-                            <label for="productos_${index}__PrecioVenta" class="form-label">Precio Venta</label>
-                            <input class="form-control" type="number" name="[${index}].PrecioVenta" id="productos_${index}__PrecioVenta" />
+                            <label class="form-label">Precio Venta *</label>
+                            <input name="[${productIndex}].PrecioVenta" type="number" 
+                                   step="0.01" min="0.01" class="form-control" required />
+                            <span class="text-danger field-validation-valid" 
+                                  data-valmsg-for="[${productIndex}].PrecioVenta" data-valmsg-replace="true"></span>
                         </div>
+
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="button" class="btn btn-danger btn-remove">
-                                <i class="bi bi-trash"></i>
+                                <i class="bi bi-trash"></i> Eliminar
                             </button>
                         </div>
-                    </div>`;
-                container.appendChild(newItem);
-            });
+                    </div>
+                </div>`;
 
-            container.addEventListener("click", function (e) {
-                if (e.target.closest(".btn-remove")) {
-                    e.target.closest(".producto-item").remove();
+            container.insertAdjacentHTML("beforeend", html);
+            productIndex++;
+        });
+
+        // Eliminar producto
+        document.addEventListener("click", function (e) {
+            if (e.target.closest(".btn-remove")) {
+                e.target.closest(".producto-item").remove();
+                reindexFields();
+            }
+        });
+
+        // Prevenir envío duplicado
+        document.getElementById("productForm").addEventListener("submit", function (e) {
+            const btn = document.getElementById("btnSubmit");
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Guardando...';
+
+            // Validar que haya al menos un producto con nombre
+            const nombreInputs = document.querySelectorAll('input[name$=".Nombre"]');
+            let hasValidProduct = false;
+
+            nombreInputs.forEach(input => {
+                if (input.value.trim().length > 0) {
+                    hasValidProduct = true;
                 }
             });
+
+            if (!hasValidProduct) {
+                e.preventDefault();
+                alert('Debe ingresar al menos un producto con nombre');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-save"></i> Guardar Todos los Productos';
+            }
+        });
+
+        // Inicializar reindexado
+        document.addEventListener('DOMContentLoaded', function () {
+            reindexFields();
         });
     </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
