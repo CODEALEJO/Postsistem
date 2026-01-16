@@ -5,75 +5,286 @@
 }
 
 <div class="container mt-4" style="max-width: 700px;">
-
     <h2 class="mb-4 text-center">Editar Producto</h2>
+
+    <!-- Mostrar mensajes de éxito -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Mostrar mensajes de error -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Mostrar errores de validación -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div><i class="bi bi-x-circle-fill me-1"></i> @error.ErrorMessage</div>
+            }
+        </div>
+    }
 
     <div class="card shadow">
         <div class="card-body">
-
-            <form asp-action="Edit" method="post">
+            <form asp-action="Edit" method="post" id="editForm">
                 @Html.AntiForgeryToken()
-
-                <!-- ID oculto (MUY IMPORTANTE) -->
                 <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="LocalId" />
 
                 <!-- Nombre -->
                 <div class="mb-3">
-                    <label asp-for="Nombre" class="form-label"></label>
-                    <input asp-for="Nombre" class="form-control" />
+                    <label asp-for="Nombre" class="form-label fw-bold">Nombre del Producto *</label>
+                    <input asp-for="Nombre" class="form-control" 
+                           placeholder="Ingrese el nombre del producto" required />
                     <span asp-validation-for="Nombre" class="text-danger"></span>
                 </div>
 
                 <!-- Cantidad -->
                 <div class="mb-3">
-                    <label asp-for="Cantidad" class="form-label"></label>
-                    <input asp-for="Cantidad" type="number" class="form-control" min="0" />
+                    <label asp-for="Cantidad" class="form-label fw-bold">Cantidad en Stock *</label>
+                    <input asp-for="Cantidad" type="number" class="form-control" 
+                           min="0" step="1" required />
                     <span asp-validation-for="Cantidad" class="text-danger"></span>
                 </div>
 
-                <!-- Costo -->
-                <div class="mb-3">
-                    <label asp-for="Costo" class="form-label"></label>
-                    <input asp-for="Costo"
-                           type="number"
-                           step="0.01"
-                           min="0"
-                           class="form-control" />
-                    <span asp-validation-for="Costo" class="text-danger"></span>
+                <div class="row">
+                    <!-- Costo -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Costo" class="form-label fw-bold">Costo Unitario *</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="Costo" type="number" step="0.01" min="0.01" 
+                                   class="form-control" id="costoInput" required />
+                        </div>
+                        <span asp-validation-for="Costo" class="text-danger"></span>
+                    </div>
+
+                    <!-- Precio Venta -->
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="PrecioVenta" class="form-label fw-bold">Precio de Venta *</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="PrecioVenta" type="number" step="0.01" min="0.01" 
+                                   class="form-control" id="precioVentaInput" required />
+                        </div>
+                        <span asp-validation-for="PrecioVenta" class="text-danger"></span>
+                    </div>
                 </div>
 
-                <!-- Precio Venta -->
-                <div class="mb-3">
-                    <label asp-for="PrecioVenta" class="form-label"></label>
-                    <input asp-for="PrecioVenta"
-                           type="number"
-                           step="0.01"
-                           min="0"
-                           class="form-control" />
-                    <span asp-validation-for="PrecioVenta" class="text-danger"></span>
+                <!-- Mostrar ganancia calculada -->
+                <div class="alert alert-info mb-4" id="gananciaInfo">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Ganancia por unidad:</strong>
+                            <span id="gananciaUnidad">$@((Model.PrecioVenta - Model.Costo).ToString("N2"))</span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Ganancia total:</strong>
+                            <span id="gananciaTotal">$@(((Model.PrecioVenta - Model.Costo) * Model.Cantidad).ToString("N2"))</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Botones -->
-                <div class="d-flex justify-content-between mt-4">
-                    <a asp-action="Index" class="btn btn-danger">
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                    <a asp-action="Index" class="btn btn-outline-danger btn-lg">
                         <i class="bi bi-arrow-left"></i> Cancelar
                     </a>
 
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Guardar Cambios
+                    <button type="submit" class="btn btn-success btn-lg" id="btnSubmit">
+                        <i class="bi bi-check-circle"></i> Guardar Cambios
                     </button>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>
 
 <!-- Bootstrap Icons -->
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // Función para calcular ganancia
+        function calcularGanancia() {
+            const costo = parseFloat(document.getElementById('costoInput').value) || 0;
+            const precioVenta = parseFloat(document.getElementById('precioVentaInput').value) || 0;
+            const cantidad = parseInt(document.getElementById('Cantidad').value) || 0;
+            
+            const gananciaUnidad = precioVenta - costo;
+            const gananciaTotal = gananciaUnidad * cantidad;
+            
+            // Formatear con separadores de miles
+            document.getElementById('gananciaUnidad').textContent = 
+                '$' + gananciaUnidad.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById('gananciaTotal').textContent = 
+                '$' + gananciaTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            // Cambiar color según la ganancia
+            const infoDiv = document.getElementById('gananciaInfo');
+            if (gananciaUnidad < 0) {
+                infoDiv.className = 'alert alert-danger mb-4';
+                infoDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-exclamation-triangle-fill"></i> Pérdida por unidad:</strong>
+                            <span id="gananciaUnidad">$${Math.abs(gananciaUnidad).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-exclamation-triangle-fill"></i> Pérdida total:</strong>
+                            <span id="gananciaTotal">$${Math.abs(gananciaTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+                        </div>
+                    </div>
+                `;
+            } else if (gananciaUnidad === 0) {
+                infoDiv.className = 'alert alert-warning mb-4';
+                infoDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <strong><i class="bi bi-info-circle-fill"></i> Sin ganancia ni pérdida</strong>
+                        </div>
+                    </div>
+                `;
+            } else {
+                infoDiv.className = 'alert alert-info mb-4';
+                infoDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-arrow-up-circle-fill"></i> Ganancia por unidad:</strong>
+                            <span id="gananciaUnidad">$${gananciaUnidad.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-graph-up-arrow"></i> Ganancia total:</strong>
+                            <span id="gananciaTotal">$${gananciaTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return gananciaUnidad;
+        }
+
+        // Inicializar cálculo de ganancia
+        document.addEventListener('DOMContentLoaded', function() {
+            calcularGanancia();
+            
+            // Escuchar cambios en los campos
+            document.getElementById('Cantidad').addEventListener('input', calcularGanancia);
+            document.getElementById('costoInput').addEventListener('input', calcularGanancia);
+            document.getElementById('precioVentaInput').addEventListener('input', calcularGanancia);
+        });
+
+        // Manejar envío del formulario con SweetAlert
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevenir envío inmediato
+            
+            const form = this;
+            const btnSubmit = document.getElementById('btnSubmit');
+            const gananciaUnidad = calcularGanancia();
+            
+            // Validar formulario del lado del cliente
+            if (!form.checkValidity()) {
+                // Mostrar errores de validación
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Formulario incompleto',
+                    text: 'Por favor completa todos los campos requeridos correctamente.',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+            
+            // Validar que la ganancia no sea negativa
+            if (gananciaUnidad < 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Atención!',
+                    html: `El precio de venta es <b>MENOR</b> que el costo.<br>
+                           Esto generará <b>PÉRDIDAS</b> por cada unidad vendida.<br><br>
+                           <small>Costo: $${parseFloat(document.getElementById('costoInput').value).toFixed(2)}<br>
+                           Precio Venta: $${parseFloat(document.getElementById('precioVentaInput').value).toFixed(2)}<br>
+                           Pérdida por unidad: $${Math.abs(gananciaUnidad).toFixed(2)}</small>`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, guardar igual',
+                    cancelButtonText: 'Corregir precio',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Si confirma, enviar formulario
+                        enviarFormularioTradicional(form, btnSubmit);
+                    } else {
+                        // Si cancela, enfocar campo de precio
+                        document.getElementById('precioVentaInput').focus();
+                        document.getElementById('precioVentaInput').select();
+                    }
+                });
+                return;
+            }
+            
+            // Confirmación normal (ganancia positiva)
+            Swal.fire({
+                title: '¿Guardar cambios?',
+                html: `Vas a actualizar el producto: <b>${document.getElementById('Nombre').value}</b><br><br>
+                       <small>Se actualizarán todos los datos en el inventario.</small>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-check-circle"></i> Sí, guardar',
+                cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#dc3545',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarFormularioTradicional(form, btnSubmit);
+                }
+            });
+        });
+
+        // Función para enviar formulario tradicional
+        function enviarFormularioTradicional(form, btnSubmit) {
+            // Deshabilitar botón para evitar doble envío
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="bi bi-hourglass-split"></i> Guardando...';
+            
+            // Mostrar mensaje de procesamiento
+            Swal.fire({
+                title: 'Guardando cambios...',
+                text: 'Por favor espera un momento',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Enviar formulario tradicionalmente (no con AJAX)
+            // Primero removemos el event listener para evitar loop infinito
+            form.removeEventListener('submit', arguments.callee);
+            
+            // Enviar formulario
+            form.submit();
+        }
+    </script>
 }

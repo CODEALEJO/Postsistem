@@ -168,6 +168,7 @@ namespace Postsistem.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             int localId = ObtenerLocalDelUsuario();
@@ -188,22 +189,113 @@ namespace Postsistem.Controllers
             int localId = ObtenerLocalDelUsuario();
 
             if (id != producto.Id)
-                return NotFound();
-
-            if (ModelState.IsValid)
             {
-                producto.LocalId = localId; // seguridad
-
-                _context.Update(producto);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "Producto actualizado correctamente";
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorMessage"] = "ID del producto no coincide";
+                return View(producto);
             }
 
-            return View(producto);
+            try
+            {
+                var productoExistente = await _context.Productos
+                    .FirstOrDefaultAsync(p => p.Id == id && p.LocalId == localId);
+
+                if (productoExistente == null)
+                {
+                    TempData["ErrorMessage"] = "Producto no encontrado o no tienes permiso para editarlo";
+                    return NotFound();
+                }
+
+                if (productoExistente.LocalId != localId)
+                {
+                    TempData["ErrorMessage"] = "No tienes permiso para editar este producto";
+                    return Unauthorized();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    // Guardar valores anteriores para mensaje
+                    var nombreAnterior = productoExistente.Nombre;
+                    var cantidadAnterior = productoExistente.Cantidad;
+                    var costoAnterior = productoExistente.Costo;
+                    var precioAnterior = productoExistente.PrecioVenta;
+
+                    // Actualizar propiedades
+                    productoExistente.Nombre = producto.Nombre;
+                    productoExistente.Cantidad = producto.Cantidad;
+                    productoExistente.Costo = producto.Costo;
+                    productoExistente.PrecioVenta = producto.PrecioVenta;
+
+                    // Verificar si hubo cambios reales
+                    var huboCambios = nombreAnterior != producto.Nombre ||
+                                     cantidadAnterior != producto.Cantidad ||
+                                     costoAnterior != producto.Costo ||
+                                     precioAnterior != producto.PrecioVenta;
+
+                    if (!huboCambios)
+                    {
+                        TempData["ErrorMessage"] = "No se realizaron cambios en el producto";
+                        return View(producto);
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    // Mensaje detallado de cambios
+                    var cambios = new List<string>();
+                    if (nombreAnterior != producto.Nombre)
+                        cambios.Add($"Nombre: '{nombreAnterior}' → '{producto.Nombre}'");
+                    if (cantidadAnterior != producto.Cantidad)
+                        cambios.Add($"Cantidad: {cantidadAnterior} → {producto.Cantidad}");
+                    if (costoAnterior != producto.Costo)
+                        cambios.Add($"Costo: ${costoAnterior} → ${producto.Costo}");
+                    if (precioAnterior != producto.PrecioVenta)
+                        cambios.Add($"Precio: ${precioAnterior} → ${producto.PrecioVenta}");
+
+                    TempData["SuccessMessage"] = $"Producto '{producto.Nombre}' actualizado correctamente. " +
+                                                $"Cambios: {string.Join(", ", cambios)}";
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    // Si hay errores de validación, mostrarlos
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    TempData["ErrorMessage"] = $"Errores de validación: {string.Join("; ", errors)}";
+                    return View(producto);
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductoExists(id))
+                {
+                    TempData["ErrorMessage"] = "El producto ya no existe o fue eliminado";
+                    return NotFound();
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error de concurrencia: alguien más modificó el producto";
+                    throw;
+                }
+            }
+            catch (DbUpdateException dbEx)
+            {
+                TempData["ErrorMessage"] = $"Error de base de datos: {dbEx.InnerException?.Message ?? dbEx.Message}";
+                return View(producto);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error inesperado: {ex.Message}";
+                return View(producto);
+            }
         }
 
+        private bool ProductoExists(int id)
+        {
+            return _context.Productos.Any(e => e.Id == id);
+        }
         public async Task<IActionResult> Delete(int id)
         {
             int localId = ObtenerLocalDelUsuario();

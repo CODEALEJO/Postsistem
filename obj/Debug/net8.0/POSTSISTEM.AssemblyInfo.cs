@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("POSTSISTEM")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+993a451ea5fe2c32baac41d4e06273dc77086dc2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+98e5659222d87eed5af7cb4bca7bd4639c016f3d")]
 [assembly: System.Reflection.AssemblyProductAttribute("POSTSISTEM")]
 [assembly: System.Reflection.AssemblyTitleAttribute("POSTSISTEM")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -28,7 +28,7 @@ namespace Postsistem.Models
     public decimal PrecioVenta { get; set; }
 
     public int LocalId { get; set; }
-    public Local Local { get; set; }
+    public Local? Local { get; set; }
 
     public ICollection<Salida>? Salidas { get; set; }
 
